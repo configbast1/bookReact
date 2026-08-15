@@ -1,0 +1,18 @@
+.layout {
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  gap: 24px;
+  align-items: start;
+}
+
+.content { min-width: 0; }
+
+.controls { display: flex; align-items: center; gap: 10px; }
+
+.sort { min-width: 210px; margin-bottom: 0; }
+
+@media (max-width: 900px) {
+  .layout { grid-template-columns: 1fr; }
+  .hidden { display: none; }
+  .sort { min-width: 160px; }
+}

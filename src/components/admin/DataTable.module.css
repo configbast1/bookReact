@@ -1,0 +1,69 @@
+.scroll { overflow-x: auto; border: 1px solid var(--border); border-radius: var(--radius-lg); }
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--surface);
+  font-size: 14px;
+}
+
+.table th {
+  text-align: left;
+  padding: 12px 14px;
+  background: var(--surface-muted);
+  color: var(--text-muted);
+  font-size: 12.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  white-space: nowrap;
+}
+
+.table td {
+  padding: 12px 14px;
+  border-top: 1px solid var(--border);
+  vertical-align: middle;
+}
+
+.table tbody tr:hover { background: var(--surface-muted); }
+
+.empty {
+  padding: 32px;
+  text-align: center;
+  color: var(--text-muted);
+  background: var(--surface);
+  border: 1px dashed var(--border-strong);
+  border-radius: var(--radius-lg);
+}
+
+/* На мобильных таблица превращается в карточки */
+@media (max-width: 720px) {
+  .scroll { border: none; }
+  .table thead { display: none; }
+  .table, .table tbody, .table tr, .table td { display: block; width: 100%; }
+
+  .table tr {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    margin-bottom: 10px;
+    padding: 6px 12px;
+  }
+
+  .table td {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    border-top: none;
+    border-bottom: 1px solid var(--border);
+    padding: 9px 0;
+  }
+
+  .table td:last-child { border-bottom: none; }
+
+  .table td::before {
+    content: attr(data-label);
+    color: var(--text-muted);
+    font-size: 12.5px;
+    font-weight: 600;
+  }
+}

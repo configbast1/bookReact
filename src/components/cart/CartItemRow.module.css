@@ -1,0 +1,84 @@
+.row {
+  display: grid;
+  grid-template-columns: 70px 1fr auto auto auto;
+  gap: 16px;
+  align-items: center;
+  padding: 16px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+}
+
+.cover { width: 70px; }
+
+.info { min-width: 0; display: flex; flex-direction: column; gap: 4px; align-items: flex-start; }
+
+.title { margin: 0; font-size: 15px; font-family: var(--font-sans); }
+.title a { color: var(--text); }
+.title a:hover { color: var(--accent); }
+
+.author { margin: 0; font-size: 13px; color: var(--text-muted); }
+.unit { margin: 0; font-size: 13px; color: var(--text-muted); }
+.savings { color: var(--success); font-weight: 600; }
+
+.qty {
+  display: flex;
+  align-items: center;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+
+.qty button {
+  width: 34px;
+  height: 38px;
+  border: none;
+  background: var(--surface);
+  cursor: pointer;
+  font-size: 17px;
+}
+
+.qty button:hover { background: var(--surface-muted); }
+
+.qty input {
+  width: 46px;
+  height: 38px;
+  border: none;
+  border-left: 1px solid var(--border);
+  border-right: 1px solid var(--border);
+  text-align: center;
+  background: var(--surface);
+  -moz-appearance: textfield;
+}
+
+.qty input::-webkit-outer-spin-button,
+.qty input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+
+.subtotal { font-weight: 700; font-size: 17px; min-width: 88px; text-align: right; }
+
+.remove {
+  border: none;
+  background: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-size: 17px;
+  padding: 8px;
+  border-radius: var(--radius-sm);
+}
+
+.remove:hover { color: var(--danger); background: var(--surface-muted); }
+
+@media (max-width: 700px) {
+  .row {
+    grid-template-columns: 60px 1fr auto;
+    grid-template-areas:
+      'cover info remove'
+      'cover qty subtotal';
+    gap: 10px 12px;
+  }
+  .cover { grid-area: cover; width: 60px; }
+  .info { grid-area: info; }
+  .qty { grid-area: qty; }
+  .subtotal { grid-area: subtotal; }
+  .remove { grid-area: remove; align-self: start; }
+}

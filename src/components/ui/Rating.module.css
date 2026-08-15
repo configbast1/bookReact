@@ -1,0 +1,19 @@
+.rating { display: inline-flex; align-items: center; gap: 6px; }
+.sm { font-size: 12px; }
+.md { font-size: 14px; }
+
+.stars { display: inline-flex; gap: 1px; }
+
+.star { position: relative; display: inline-block; line-height: 1; }
+.starBg { color: var(--border-strong); }
+.starFill {
+  position: absolute;
+  left: 0;
+  top: 0;
+  overflow: hidden;
+  color: #e3a008;
+  white-space: nowrap;
+}
+
+.value { font-weight: 600; }
+.count { color: var(--text-muted); }

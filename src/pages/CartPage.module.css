@@ -1,0 +1,19 @@
+.layout {
+  display: grid;
+  grid-template-columns: 1fr 330px;
+  gap: 24px;
+  align-items: start;
+}
+
+.items { display: flex; flex-direction: column; gap: 12px; }
+
+.continue {
+  display: block;
+  text-align: center;
+  margin-top: 12px;
+  font-size: 14px;
+}
+
+@media (max-width: 900px) {
+  .layout { grid-template-columns: 1fr; }
+}

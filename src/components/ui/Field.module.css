@@ -1,0 +1,60 @@
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 14px;
+}
+
+.label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+.required { color: var(--danger); }
+
+.control {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-md);
+  background: var(--surface);
+  color: var(--text);
+  transition: border-color var(--transition), box-shadow var(--transition);
+}
+
+.control:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-soft);
+}
+
+.select { cursor: pointer; appearance: auto; }
+
+.textarea { resize: vertical; min-height: 90px; }
+
+.hasError .control {
+  border-color: var(--danger);
+  background: color-mix(in srgb, var(--danger) 5%, var(--surface));
+}
+
+.error { font-size: 12.5px; color: var(--danger); }
+
+.hint { font-size: 12.5px; color: var(--text-muted); }
+
+.checkbox {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  user-select: none;
+  font-size: 14px;
+  padding: 4px 0;
+}
+
+.checkbox input {
+  width: 17px;
+  height: 17px;
+  accent-color: var(--accent);
+  cursor: pointer;
+}

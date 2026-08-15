@@ -1,0 +1,9 @@
+export { default as HomePage } from './HomePage.jsx';
+export { default as CatalogPage } from './CatalogPage.jsx';
+export { default as BookPage } from './BookPage.jsx';
+export { default as CartPage } from './CartPage.jsx';
+export { default as CheckoutPage } from './CheckoutPage.jsx';
+export { default as OrdersPage } from './OrdersPage.jsx';
+export { default as LoginPage } from './LoginPage.jsx';
+export { default as AdminPage } from './AdminPage.jsx';
+export { default as NotFoundPage } from './NotFoundPage.jsx';

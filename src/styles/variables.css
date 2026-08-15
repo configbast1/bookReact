@@ -1,0 +1,64 @@
+/* Дизайн-токени: кольори, тіні, відступи, радіуси.
+   Тема перемикається атрибутом data-theme на <html>. */
+
+:root {
+  /* Світла тема (за замовчуванням) */
+  --bg: #f6f5f2;
+  --surface: #ffffff;
+  --surface-raised: #ffffff;
+  --surface-muted: #f0eeea;
+  --border: #e2ded6;
+  --border-strong: #cfc9bd;
+
+  --text: #23201c;
+  --text-muted: #6f675d;
+  --text-inverse: #ffffff;
+
+  --accent: #8a5a2b;
+  --accent-hover: #74491f;
+  --accent-soft: #f3e7d8;
+
+  --success: #2e7d5b;
+  --danger: #c0392b;
+  --warning: #b7791f;
+
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+
+  --shadow-sm: 0 1px 2px rgba(35, 32, 28, 0.06);
+  --shadow-md: 0 4px 12px rgba(35, 32, 28, 0.08);
+  --shadow-lg: 0 12px 32px rgba(35, 32, 28, 0.14);
+
+  --header-h: 64px;
+  --container: 1200px;
+  --transition: 0.18s ease;
+
+  --font-sans: 'Segoe UI', system-ui, -apple-system, 'Helvetica Neue', Arial, sans-serif;
+  --font-serif: Georgia, 'Times New Roman', serif;
+}
+
+[data-theme='dark'] {
+  --bg: #16151a;
+  --surface: #1e1d23;
+  --surface-raised: #26242c;
+  --surface-muted: #2a2830;
+  --border: #35323c;
+  --border-strong: #494551;
+
+  --text: #ece9e4;
+  --text-muted: #a29b93;
+  --text-inverse: #16151a;
+
+  --accent: #d9a066;
+  --accent-hover: #e8b47f;
+  --accent-soft: #3a2f24;
+
+  --success: #4caf85;
+  --danger: #e57368;
+  --warning: #e0b155;
+
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.45);
+  --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.55);
+}

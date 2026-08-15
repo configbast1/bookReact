@@ -1,0 +1,68 @@
+.wrap { max-width: 420px; margin: 24px auto; }
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  box-shadow: var(--shadow-sm);
+}
+
+.tabs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4px;
+  padding: 4px;
+  background: var(--surface-muted);
+  border-radius: var(--radius-md);
+  margin-bottom: 22px;
+}
+
+.tab, .tabActive {
+  padding: 9px;
+  border: none;
+  border-radius: var(--radius-sm);
+  background: none;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 14.5px;
+  color: var(--text-muted);
+  transition: all var(--transition);
+}
+
+.tabActive { background: var(--surface); color: var(--text); box-shadow: var(--shadow-sm); }
+
+.error {
+  padding: 10px 12px;
+  margin-bottom: 12px;
+  background: color-mix(in srgb, var(--danger) 12%, transparent);
+  color: var(--danger);
+  border-radius: var(--radius-md);
+  font-size: 14px;
+}
+
+.demo {
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border);
+}
+
+.demoTitle { font-size: 13px; color: var(--text-muted); margin: 0 0 8px; }
+
+.demoButton {
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: 8px 10px;
+  margin-bottom: 6px;
+  border: 1px dashed var(--border-strong);
+  border-radius: var(--radius-md);
+  background: none;
+  cursor: pointer;
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.demoButton:hover { border-color: var(--accent); color: var(--accent); }
+
+.back { text-align: center; margin-top: 16px; font-size: 14px; }

@@ -1,0 +1,14 @@
+// Единая точка входа в доменную модель.
+export { default as Entity } from './Entity.js';
+export { default as Product } from './Product.js';
+export { default as Book } from './Book.js';
+export { default as PaperBook } from './PaperBook.js';
+export { default as EBook } from './EBook.js';
+export { default as AudioBook } from './AudioBook.js';
+export { default as BookFactory } from './BookFactory.js';
+export { default as User } from './User.js';
+export { default as Customer } from './Customer.js';
+export { default as AdminUser } from './AdminUser.js';
+export { default as UserFactory } from './UserFactory.js';
+export { default as CartItem } from './CartItem.js';
+export { default as Order } from './Order.js';

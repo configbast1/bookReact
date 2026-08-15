@@ -1,0 +1,17 @@
+.grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 0 14px; }
+.grid3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0 14px; }
+
+.actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 10px; }
+
+.error {
+  padding: 10px 12px;
+  background: color-mix(in srgb, var(--danger) 12%, transparent);
+  color: var(--danger);
+  border-radius: var(--radius-md);
+  font-size: 14px;
+}
+
+@media (max-width: 640px) {
+  .grid2, .grid3 { grid-template-columns: 1fr; }
+  .actions { flex-direction: column-reverse; }
+}
