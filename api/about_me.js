@@ -12,7 +12,7 @@ export const aboutMe = {
   stack: ['React', 'Redux Toolkit', 'React Router', 'TanStack Query', 'Vite', 'Node.js'],
   tools: ['WebStorm', 'Git', 'GitHub', 'Vercel', 'Figma'],
   currentProject: 'Bookstore — online book shop built with React',
-  favoriteBook: 'Clean Code by Robert Martin',
+  favoriteBook: 'Clean Code by Robert Martin, The Art of Deception by kevin Mitnick',
   favoriteGame: 'The Witcher 3',
   hobbies: ['programming', 'reading', 'gaming', 'music'],
   yearGoal: 'Get the first commercial front-end job',
