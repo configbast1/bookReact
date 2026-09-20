@@ -1,9 +1,5 @@
 import { useEffect, useState } from 'react';
 
-/**
- * useMediaQuery — подписка на CSS media query из JS.
- * Нужен для адаптивности: на мобильном фильтры показываем в выдвижной панели.
- */
 export default function useMediaQuery(query) {
   const [matches, setMatches] = useState(
     () => window.matchMedia?.(query).matches ?? false,

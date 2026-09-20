@@ -4,24 +4,19 @@ import { UserFactory } from '@/core/models';
 import { userRepository } from '@/core/api';
 import { cookieStore, STORAGE_KEYS } from '@/core/storage';
 
-/**
- * AuthContext — авторизация.
- * Сессия хранится в COOKIE (живёт 7 дней и переживает перезагрузку вкладки),
- * а сам объект пользователя — это экземпляр класса Customer или AdminUser.
- */
 const AuthContext = createContext(null);
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // Восстановление сессии из cookie при старте приложения.
   useEffect(() => {
     const session = cookieStore.get(STORAGE_KEYS.SESSION, null);
     if (!session?.email) {
       setLoading(false);
       return;
     }
+
     userRepository
       .findByEmail(session.email)
       .then((raw) => {
@@ -32,12 +27,10 @@ export function AuthProvider({ children }) {
 
   const login = useCallback(async (email, password) => {
     const raw = await userRepository.findByEmail(email);
-    if (!raw) throw new Error('Користувача з таким email не знайдено');
+    if (!raw) throw new Error('login.userNotFound');
 
     const model = UserFactory.create(raw);
-    if (!model.checkPassword(password)) {
-      throw new Error('Невірний пароль');
-    }
+    if (!model.checkPassword(password)) throw new Error('login.wrongPassword');
 
     cookieStore.set(STORAGE_KEYS.SESSION, { email: model.email, at: Date.now() }, 7);
     setUser(model);
@@ -46,7 +39,7 @@ export function AuthProvider({ children }) {
 
   const register = useCallback(async ({ name, email, password }) => {
     const exists = await userRepository.findByEmail(email);
-    if (exists) throw new Error('Такий email вже зареєстровано');
+    if (exists) throw new Error('login.emailTaken');
 
     const created = await userRepository.create({
       id: `u_${Date.now().toString(36)}`,
@@ -56,11 +49,29 @@ export function AuthProvider({ children }) {
       password,
       bonusPoints: 0,
     });
+
     const model = UserFactory.create(created);
     cookieStore.set(STORAGE_KEYS.SESSION, { email: model.email, at: Date.now() }, 7);
     setUser(model);
     return model;
   }, []);
+
+  const updateProfile = useCallback(
+    async (changes) => {
+      if (!user) throw new Error('login.userNotFound');
+
+      const raw = (await userRepository.findByEmail(user.email)) ?? {};
+      const merged = { ...raw, ...changes };
+
+      await userRepository.update(user.id, merged);
+
+      const model = UserFactory.create(merged);
+      cookieStore.set(STORAGE_KEYS.SESSION, { email: model.email, at: Date.now() }, 7);
+      setUser(model);
+      return model;
+    },
+    [user],
+  );
 
   const logout = useCallback(() => {
     cookieStore.remove(STORAGE_KEYS.SESSION);
@@ -76,9 +87,10 @@ export function AuthProvider({ children }) {
       can: (permission) => Boolean(user?.can(permission)),
       login,
       register,
+      updateProfile,
       logout,
     }),
-    [user, loading, login, register, logout],
+    [user, loading, login, register, updateProfile, logout],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
@@ -87,7 +99,7 @@ export function AuthProvider({ children }) {
 AuthProvider.propTypes = { children: PropTypes.node };
 
 export function useAuth() {
-  const ctx = useContext(AuthContext);
-  if (!ctx) throw new Error('useAuth має використовуватись всередині <AuthProvider>');
-  return ctx;
+  const context = useContext(AuthContext);
+  if (!context) throw new Error('useAuth must be used inside <AuthProvider>');
+  return context;
 }

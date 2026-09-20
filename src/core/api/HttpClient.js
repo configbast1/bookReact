@@ -1,7 +1,3 @@
-/**
- * HttpClient — тонкая обёртка над fetch.
- * Единое место для базового URL, таймаута, заголовков и обработки ошибок.
- */
 export class HttpError extends Error {
   constructor(status, message, url) {
     super(message);
@@ -31,7 +27,7 @@ export default class HttpClient {
       });
 
       if (!response.ok) {
-        throw new HttpError(response.status, `Помилка запиту: ${response.status}`, url);
+        throw new HttpError(response.status, `Request failed: ${response.status}`, url);
       }
       if (response.status === 204) return null;
       return await response.json();

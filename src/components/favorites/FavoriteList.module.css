@@ -1,0 +1,72 @@
+.list {
+  display: grid;
+  gap: 16px;
+}
+
+.card {
+  padding: 18px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+}
+
+.head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.title {
+  margin: 0;
+  font-family: var(--font-serif);
+  font-size: 1.25rem;
+}
+
+.author {
+  margin: 2px 0 0;
+  color: var(--text-muted);
+}
+
+.description {
+  margin: 12px 0;
+  line-height: 1.55;
+}
+
+.meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  margin: 0 0 12px;
+}
+
+.meta dt {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.meta dd {
+  margin: 2px 0 0;
+  font-weight: 600;
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
+}
+
+.count {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
+
+.reviews {
+  margin-top: 14px;
+}

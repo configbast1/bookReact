@@ -6,3 +6,5 @@ dist-ssr
 .env
 .vscode/*
 !.vscode/extensions.json
+.idea/
+*.tar.gz

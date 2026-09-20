@@ -1,6 +1,5 @@
 import User from './User.js';
 
-/** Customer — обычный покупатель. */
 export default class Customer extends User {
   static ROLE = 'customer';
 
@@ -11,12 +10,10 @@ export default class Customer extends User {
     this.bonusPoints = Number(data.bonusPoints ?? 0);
   }
 
-  /** Расширяем права родителя (super используется как значение). */
   get permissions() {
     return [...super.permissions, 'cart:write', 'order:create', 'order:read:own'];
   }
 
-  /** Персональная скидка от накопленных бонусов. */
   getLoyaltyDiscount() {
     if (this.bonusPoints >= 1000) return 10;
     if (this.bonusPoints >= 500) return 5;

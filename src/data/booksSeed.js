@@ -1,8 +1,3 @@
-/**
- * Стартовый каталог книг.
- * Этот же массив попадает в db.json для json-server.
- * Поле format определяет, объект какого класса создаст BookFactory.
- */
 export const booksSeed = [
   { id: 'b01', format: 'paper', title: 'Кобзар', author: 'Тарас Шевченко', genre: 'Поезія', year: 1840, price: 320, stock: 14, pages: 480, isbn: '978-966-01-0001-1', rating: 4.9, reviewsCount: 212, cover: 'hard', weight: 620, language: 'uk', description: 'Найвідоміша збірка української поезії — основа національної літератури.' },
   { id: 'b02', format: 'paper', title: 'Тіні забутих предків', author: 'Михайло Коцюбинський', genre: 'Класика', year: 1911, price: 210, stock: 9, pages: 160, isbn: '978-966-01-0002-8', rating: 4.7, reviewsCount: 98, cover: 'soft', weight: 240, language: 'uk', description: 'Повість про кохання й гуцульські легенди Карпат.' },
@@ -30,12 +25,4 @@ export const booksSeed = [
   { id: 'b24', format: 'paper', title: 'Мистецтво війни', author: 'Сунь Дзи', genre: 'Нонфікшн', year: -500, price: 200, stock: 33, pages: 128, isbn: '978-617-09-0024-0', rating: 4.4, reviewsCount: 470, cover: 'soft', weight: 200, language: 'uk', description: 'Давній трактат про стратегію, який читають і поза військовою справою.' },
 ];
 
-/** Список жанров для фильтров (вычисляется один раз). */
 export const GENRES = [...new Set(booksSeed.map((b) => b.genre))].sort();
-
-/** Форматы книг с человекочитаемыми названиями. */
-export const FORMATS = [
-  { value: 'paper', label: 'Паперова' },
-  { value: 'ebook', label: 'Електронна' },
-  { value: 'audio', label: 'Аудіокнига' },
-];

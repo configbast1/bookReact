@@ -2,7 +2,6 @@ import PropTypes from 'prop-types';
 import BookCard from './BookCard.jsx';
 import styles from './BookGrid.module.css';
 
-/** BookGrid — адаптивная сетка карточек. */
 export default function BookGrid({ books, compact = false }) {
   return (
     <div className={`${styles.grid} ${compact ? styles.compact : ''}`}>

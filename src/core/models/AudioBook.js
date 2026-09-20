@@ -1,6 +1,5 @@
 import Book from './Book.js';
 
-/** Аудіокнига — есть диктор и длительность. */
 export default class AudioBook extends Book {
   static FORMAT = 'audio';
 
@@ -18,7 +17,6 @@ export default class AudioBook extends Book {
     return 0;
   }
 
-  /** Длительность в формате "8 год 20 хв". */
   getFormattedDuration() {
     const h = Math.floor(this.durationMin / 60);
     const m = this.durationMin % 60;

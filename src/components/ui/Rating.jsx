@@ -1,23 +1,24 @@
 import PropTypes from 'prop-types';
 import styles from './Rating.module.css';
 
-/** Rating — звёзды рейтинга с поддержкой половинок. */
-export default function Rating({ value = 0, count = null, size = 'md', showValue = true }) {
-  const stars = [1, 2, 3, 4, 5];
+const STARS = [1, 2, 3, 4, 5];
 
+export default function Rating({ value = 0, count = null, size = 'md', showValue = true }) {
   return (
     <span
       className={`${styles.rating} ${styles[size]}`}
-      title={`Рейтинг ${value} з 5`}
-      aria-label={`Рейтинг ${value} з 5`}
+      title={`${value.toFixed(1)} / 5`}
+      aria-label={`${value.toFixed(1)} / 5`}
     >
       <span className={styles.stars} aria-hidden="true">
-        {stars.map((star) => {
+        {STARS.map((star) => {
           const fill = Math.max(0, Math.min(1, value - star + 1)) * 100;
           return (
             <span key={star} className={styles.star}>
               <span className={styles.starBg}>★</span>
-              <span className={styles.starFill} style={{ width: `${fill}%` }}>★</span>
+              <span className={styles.starFill} style={{ width: `${fill}%` }}>
+                ★
+              </span>
             </span>
           );
         })}

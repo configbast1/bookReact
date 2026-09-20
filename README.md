@@ -1,116 +1,102 @@
-# 📖 Книгарня — інтернет-магазин книг на React
+# Bookstore — интернет-магазин книг на React
 
-Навчальний проєкт: повноцінний магазин книг з ООП-ядром, Redux Toolkit, Context API,
-фільтрами, кошиком, оформленням замовлення, адмін-панеллю та адаптивною версткою.
+Учебный финальный проект: каталог книг, корзина, оформление заказа, личный кабинет,
+админ-панель, раздел любимых книг и страница «Обо мне», которая читает данные
+с собственного серверного эндпоинта.
 
-**Стек:** Vite + React 18 (JavaScript) · Redux Toolkit · React Router 6 · CSS Modules · json-server
+English version: [README.en.md](README.en.md)
 
----
+## Стек
 
-## Швидкий старт
+| Слой | Технологии |
+| --- | --- |
+| Сборка | Vite 5, React 19 |
+| Состояние | Redux Toolkit, Context API, TanStack Query |
+| Маршрутизация | React Router 6 (вложенные маршруты, 404) |
+| Формы | React Hook Form + Zod, Formik + Yup, `useActionState` |
+| Интерфейс | CSS Modules, Headless UI (Dialog, Menu), две темы |
+| Языки | i18next + react-i18next (русский и английский) |
+| Данные | json-server, репозитории с резервным localStorage |
+| Тесты | Vitest, Testing Library |
+
+## Быстрый старт
 
 ```bash
-npm install          # встановити залежності
-npm start            # запустити фронтенд (5173) + json-server (3001) разом
+npm install
+cp .env.example .env
+npm start
 ```
 
-Або окремо:
+`npm start` поднимает фронтенд на `http://localhost:5173` и json-server на `http://localhost:3001`.
+
+Отдельные команды:
 
 ```bash
-npm run server       # API на http://localhost:3001 (json-server + db.json)
-npm run dev          # фронтенд на http://localhost:5173
-npm run build        # продакшн-збірка в dist/
-npm run preview      # переглянути продакшн-збірку
-npm run lint         # перевірка ESLint
+npm run dev            # только фронтенд
+npm run server         # только API (json-server + db.json)
+npm run build          # продакшн-сборка в dist/
+npm run preview        # просмотр сборки
+npm run lint           # ESLint
+npm test               # прогон тестов
+npm run test:coverage  # тесты с отчётом покрытия
 ```
 
-> **Без сервера теж працює.** Якщо json-server не запущений, репозиторії
-> автоматично перемикаються на локальну копію даних у `localStorage`
-> (див. `src/core/api/BaseRepository.js`). Тому проєкт можна задеплоїти
-> як статичний сайт і він буде повністю функціональним.
+Без json-server приложение тоже работает: репозитории переключаются на локальную копию
+данных в localStorage (`src/core/api/BaseRepository.js`).
 
-## Демо-доступи
+## Переменные окружения
+
+Все ключи и адреса вынесены в `.env` (файл в `.gitignore`, шаблон — `.env.example`).
+В коде они доступны только через `src/config/env.js`.
+
+| Переменная | Назначение |
+| --- | --- |
+| `VITE_APP_NAME` | Название магазина в шапке и подвале |
+| `VITE_API_URL` | Базовый адрес API |
+| `VITE_API_TIMEOUT` | Таймаут запросов, мс |
+| `VITE_ABOUT_ME_URL` | Адрес эндпоинта «Обо мне» |
+| `VITE_DEFAULT_LOCALE` | Язык по умолчанию (`ru` или `en`) |
+| `VITE_FREE_SHIPPING_FROM` | Сумма бесплатной доставки |
+| `VITE_CURRENCY` | Валюта (`UAH`, `USD`, `EUR`, `PLN`) |
+| `VITE_SUPPORT_EMAIL` | Контактный адрес в подвале |
+| `VITE_ANALYTICS_KEY` | Пример секретного ключа, который не должен попадать в код |
+
+На Vercel те же переменные задаются в настройках проекта (Settings → Environment Variables).
+
+## Демо-доступы
 
 | Роль | Email | Пароль |
-|------|-------|--------|
-| Адміністратор | `admin@book.ua` | `admin123` |
-| Покупець | `user@book.ua` | `user123` |
+| --- | --- | --- |
+| Администратор | `admin@book.ua` | `admin123` |
+| Покупатель | `user@book.ua` | `user123` |
 
-Промокоди: `BOOK10` (−10%), `READMORE` (−15%), `STUDENT` (−20%).
+Промокоды: `BOOK10` (−10%), `READMORE` (−15%), `STUDENT` (−20%).
 
----
+## Маршруты
 
-## Що вміє застосунок
+| Путь | Страница |
+| --- | --- |
+| `/` | Витрина: подборки книг |
+| `/catalog` | Каталог: категории, фильтры, сортировка, пагинация |
+| `/book/:id` | Карточка книги, отзывы, диалог с отрывком |
+| `/products/:id` | Редирект на карточку книги |
+| `/cart`, `/checkout` | Корзина и оформление заказа |
+| `/favorites` | Любимые книги с отзывами |
+| `/about-me` | Данные с эндпоинта `/api/about_me` |
+| `/login` | Вход и регистрация |
+| `/account/profile`, `/account/orders`, `/account/settings` | Личный кабинет (вложенные маршруты) |
+| `/admin`, `/admin/books`, `/admin/orders`, `/admin/quick-add`, `/admin/formik` | Админ-панель (вложенные маршруты) |
+| любой другой | Страница 404 |
 
-- **Каталог** — 24 книги трьох форматів (паперові, електронні, аудіо)
-- **Пошук і фільтри** — текстовий пошук з debounce, жанр, формат, ціна, рейтинг,
-  наявність, новинки; 6 варіантів сортування; пагінація
-- **Кошик** — додавання, зміна кількості, промокоди, розрахунок доставки,
-  збереження між сесіями
-- **Оформлення замовлення** — форма з повною валідацією, вибір доставки та оплати
-- **Авторизація** — вхід і реєстрація, сесія в cookie, ролі (покупець / адмін)
-- **Адмін-панель** — статистика, CRUD книг, керування статусами замовлень
-- **Теми** — світла і темна, вибір запамʼятовується в cookie
-- **Адаптивність** — від 320px до десктопу, мобільне меню, таблиці-картки
+## Эндпоинт «Обо мне»
 
----
+`api/about_me.js` — серверная функция для Vercel, отдающая JSON с фактами об авторе.
+В режиме разработки тот же файл отдаётся плагином Vite, поэтому адрес
+`http://localhost:5173/api/about_me` работает без отдельного сервера.
 
-## Структура проєкту
+## Документация
 
-```
-src/
-├── core/                  ← «ядро» без React: чиста бізнес-логіка
-│   ├── models/            ← ООП-класи домену (Entity → Product → Book → …)
-│   ├── validation/        ← ієрархія валідаторів + схеми форм
-│   ├── storage/           ← адаптери сховищ (localStorage, cookie, memory)
-│   └── api/               ← HttpClient + репозиторії
-├── store/                 ← Redux Toolkit: слайси, селектори, middleware
-├── context/               ← useContext: тема, авторизація, сповіщення
-├── hooks/                 ← власні хуки: useForm, useCart, useDebounce, …
-├── components/            ← UI, layout, books, cart, admin
-├── pages/                 ← сторінки-маршрути
-├── data/                  ← початкові дані каталогу
-└── styles/                ← дизайн-токени
-```
-
-Детальний опис архітектури — у [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
-
----
-
-## Виконання вимог до проєкту
-
-| # | Вимога | Де реалізовано |
-|---|--------|----------------|
-| 1 | 5+ класів ООП, успадкування | `src/core/models/` — 13 класів у 3 гілках успадкування, плюс `src/core/validation/` (9 класів) і `src/core/storage/` (4 класи) |
-| 2 | Пропси, хуки | PropTypes у кожному компоненті; 5 власних хуків у `src/hooks/`; `useState/useEffect/useMemo/useCallback/useRef/useId/memo` |
-| 3 | Фільтри пошуку товарів | `src/components/books/BookFilters.jsx` + `src/store/filtersSlice.js` + `selectFilteredBooks` |
-| 4 | Кошик та замовлення | `src/store/cartSlice.js`, `src/hooks/useCart.js`, `CartPage`, `CheckoutPage`, `OrdersPage` |
-| 5 | Адмін-панель | `src/pages/AdminPage.jsx` + `src/components/admin/` (CRUD + статистика) |
-| 6 | Валідація форм | `src/core/validation/` (ООП-валідатори) + `src/hooks/useForm.js` |
-| 7 | Збереження даних | cookie (`CookieAdapter`: сесія, тема), localStorage (`LocalStorageAdapter`: кошик, фільтри, історія переглядів), БД (`db.json` + json-server) |
-| 8 | useContext / Redux | 3 контексти у `src/context/`, 4 слайси Redux Toolkit у `src/store/` |
-| 9 | Ергономіка та стилі | CSS-змінні, темна тема, скелетони, порожні стани, focus-visible, ARIA, `prefers-reduced-motion` |
-| 10 | Репозиторій, архітектура | цей README + `docs/ARCHITECTURE.md` |
-| 11 | Деплой та адаптивність | `vercel.json`, media queries у кожному модулі, перевірено від 320px |
-| 12 | Доповідь та питання по коду | `docs/PRESENTATION.md` + `docs/QA.md` |
-
----
-
-## Деплой
-
-**Vercel / Netlify:**
-
-```bash
-npm run build       # артефакт у dist/
-```
-
-Налаштування вже є у `vercel.json` (SPA-редіректи на `index.html`).
-
-**GitHub Pages:** додайте `base: '/назва-репозиторію/'` у `vite.config.js`
-і використайте `gh-pages -d dist`.
-
----
-
-## Ліцензія
-
-Навчальний проєкт, вільне використання.
+- [Архитектура](docs/ARCHITECTURE.ru.md)
+- [Тесты](docs/TESTING.ru.md)
+- [Деплой](docs/DEPLOY.ru.md)
+- [Соответствие заданиям](docs/HOMEWORK.ru.md)

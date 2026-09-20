@@ -1,17 +1,13 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { localStore, STORAGE_KEYS } from '@/core/storage';
 
-/**
- * Корзина. В состоянии держим минимум: id книги и количество.
- * Цены и названия берём из каталога — так данные не рассинхронизируются.
- */
 const persisted = localStore.get(STORAGE_KEYS.CART, []);
 
 const cartSlice = createSlice({
   name: 'cart',
   initialState: {
-    items: Array.isArray(persisted) ? persisted : [], // [{ bookId, quantity }]
-    promo: null, // { code, percent }
+    items: Array.isArray(persisted) ? persisted : [],
+    promo: null,
   },
   reducers: {
     addToCart(state, action) {

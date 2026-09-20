@@ -1,9 +1,3 @@
-/**
- * Демо-пользователи. Пароли хранятся в виде "хеша" (см. User.hash).
- * Пароли для входа:
- *   admin@book.ua  -> admin123
- *   user@book.ua   -> user123
- */
 export const usersSeed = [
   {
     id: 'u_admin',

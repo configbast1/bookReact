@@ -2,12 +2,6 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { bookRepository } from '@/core/api';
 import { Entity } from '@/core/models';
 
-/**
- * Срез каталога книг.
- * В Redux храним ТОЛЬКО сериализуемые объекты (требование Redux),
- * а в классы Book их превращаем в селекторах/компонентах через BookFactory.
- */
-
 export const fetchBooks = createAsyncThunk('books/fetchAll', async () => {
   return bookRepository.getAll();
 });
@@ -31,11 +25,10 @@ const booksSlice = createSlice({
   name: 'books',
   initialState: {
     items: [],
-    status: 'idle', // idle | loading | succeeded | failed
+    status: 'idle',
     error: null,
   },
   reducers: {
-    // Локальное изменение остатка после оформления заказа.
     decreaseStock(state, action) {
       action.payload.forEach(({ bookId, quantity }) => {
         const book = state.items.find((b) => b.id === bookId);
@@ -76,7 +69,6 @@ const booksSlice = createSlice({
 export const { decreaseStock } = booksSlice.actions;
 export default booksSlice.reducer;
 
-// ---- простые селекторы ----
 export const selectRawBooks = (state) => state.books.items;
 export const selectBooksStatus = (state) => state.books.status;
 export const selectBookById = (id) => (state) => state.books.items.find((b) => b.id === id) ?? null;

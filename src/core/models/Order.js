@@ -1,13 +1,8 @@
 import Entity from './Entity.js';
 
-/**
- * Order — заказ. Третья ветка наследования от Entity.
- * Инкапсулирует переходы статусов (машина состояний).
- */
 export default class Order extends Entity {
   #status;
 
-  /** Допустимые статусы и разрешённые переходы между ними. */
   static STATUSES = ['new', 'processing', 'shipped', 'done', 'cancelled'];
 
   static TRANSITIONS = {
@@ -18,18 +13,10 @@ export default class Order extends Entity {
     cancelled: [],
   };
 
-  static STATUS_LABELS = {
-    new: 'Новий',
-    processing: 'В обробці',
-    shipped: 'Відправлено',
-    done: 'Виконано',
-    cancelled: 'Скасовано',
-  };
-
   constructor(data) {
     super(data.id ?? Entity.generateId('ord'), data.createdAt);
-    this.items = data.items ?? []; // [{ bookId, title, price, quantity }]
-    this.customer = data.customer ?? {}; // { name, email, phone, address, payment, delivery }
+    this.items = data.items ?? [];
+    this.customer = data.customer ?? {};
     this.userId = data.userId ?? null;
     this.shipping = Number(data.shipping ?? 0);
     this.discount = Number(data.discount ?? 0);
@@ -41,11 +28,6 @@ export default class Order extends Entity {
     return this.#status;
   }
 
-  get statusLabel() {
-    return Order.STATUS_LABELS[this.#status];
-  }
-
-  /** Сумма товаров без доставки и скидки. */
   get itemsTotal() {
     return Math.round(this.items.reduce((s, i) => s + i.price * i.quantity, 0) * 100) / 100;
   }
@@ -59,22 +41,20 @@ export default class Order extends Entity {
     return this.items.reduce((s, i) => s + i.quantity, 0);
   }
 
-  /** Можно ли перевести заказ в статус next. */
   canTransitionTo(next) {
     return (Order.TRANSITIONS[this.#status] ?? []).includes(next);
   }
 
-  /** Смена статуса с проверкой — бизнес-правило внутри модели, а не в UI. */
   setStatus(next) {
     if (!this.canTransitionTo(next)) {
-      throw new Error(`Неможливо змінити статус з "${this.statusLabel}" на "${Order.STATUS_LABELS[next] ?? next}"`);
+      throw new Error(`Cannot change status from "${this.status}" to "${next}"`);
     }
     this.#status = next;
     return this;
   }
 
   getDisplayName() {
-    return `Замовлення №${this.id.slice(-6).toUpperCase()}`;
+    return `Order #${this.id.slice(-6).toUpperCase()}`;
   }
 
   toJSON() {

@@ -1,4 +1,3 @@
-// Единая точка входа в доменную модель.
 export { default as Entity } from './Entity.js';
 export { default as Product } from './Product.js';
 export { default as Book } from './Book.js';

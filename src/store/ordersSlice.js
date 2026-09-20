@@ -6,13 +6,11 @@ export const fetchOrders = createAsyncThunk('orders/fetchAll', async () => {
   return orderRepository.getAll();
 });
 
-/** Создание заказа: строим модель Order, она сама считает суммы. */
 export const placeOrder = createAsyncThunk('orders/place', async (payload) => {
   const order = new Order(payload);
   return orderRepository.create(order.toJSON());
 });
 
-/** Смена статуса — валидация перехода внутри модели Order. */
 export const changeOrderStatus = createAsyncThunk(
   'orders/changeStatus',
   async ({ id, status }, { rejectWithValue }) => {

@@ -2,11 +2,6 @@ import PropTypes from 'prop-types';
 import { useId } from 'react';
 import styles from './Field.module.css';
 
-/**
- * Обёртка поля: label + контрол + текст ошибки.
- * Связывает подпись и поле через id (доступность),
- * выставляет aria-invalid и aria-describedby для скринридеров.
- */
 function FieldWrapper({ label, error, hint, required, children, id }) {
   return (
     <div className={`${styles.field} ${error ? styles.hasError : ''}`}>
@@ -37,7 +32,6 @@ FieldWrapper.propTypes = {
   id: PropTypes.string,
 };
 
-/** Текстовое поле. */
 export function Input({ label, error, hint, required, className = '', ...rest }) {
   const id = useId();
   return (
@@ -61,7 +55,6 @@ Input.propTypes = {
   className: PropTypes.string,
 };
 
-/** Выпадающий список. */
 export function Select({ label, error, hint, required, options = [], className = '', ...rest }) {
   const id = useId();
   return (
@@ -94,7 +87,6 @@ Select.propTypes = {
   ),
 };
 
-/** Многострочное поле. */
 export function Textarea({ label, error, hint, required, className = '', ...rest }) {
   const id = useId();
   return (
@@ -113,7 +105,6 @@ export function Textarea({ label, error, hint, required, className = '', ...rest
 
 Textarea.propTypes = Input.propTypes;
 
-/** Чекбокс с подписью. */
 export function Checkbox({ label, className = '', ...rest }) {
   const id = useId();
   return (

@@ -1,7 +1,6 @@
 import PropTypes from 'prop-types';
 import styles from './StatCard.module.css';
 
-/** StatCard — плитка статистики в админ-панели. */
 export default function StatCard({ label, value, hint, icon }) {
   return (
     <div className={styles.card}>

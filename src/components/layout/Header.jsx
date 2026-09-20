@@ -1,18 +1,19 @@
-import { useState } from 'react';
-import { Link, NavLink, useNavigate } from 'react-router-dom';
+import { useMemo, useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
+import { useTranslation } from 'react-i18next';
 import { useTheme } from '@/context/ThemeContext.jsx';
 import { useAuth } from '@/context/AuthContext.jsx';
 import { useCart } from '@/hooks';
 import { setFilter } from '@/store';
 import { Button } from '@/components/ui';
+import env from '@/config/env.js';
+import NavList from './NavList.jsx';
+import LanguageSwitcher from './LanguageSwitcher.jsx';
 import styles from './Header.module.css';
 
-/**
- * Header — шапка сайта: логотип, навигация, поиск, тема, корзина, профиль.
- * На мобильных превращается в бургер-меню.
- */
 export default function Header() {
+  const { t } = useTranslation();
   const { theme, toggleTheme } = useTheme();
   const { user, isAuthenticated, isAdmin, logout } = useAuth();
   const { count } = useCart();
@@ -22,33 +23,48 @@ export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [query, setQuery] = useState('');
 
+  const navItems = useMemo(() => {
+    const items = [
+      { to: '/catalog', label: t('nav.catalog'), icon: '📚' },
+      { to: '/favorites', label: t('nav.favorites'), icon: '⭐' },
+      { to: '/about-me', label: t('nav.about'), icon: '🙋' },
+      { to: '/account/orders', label: t('nav.orders'), icon: '📦' },
+    ];
+
+    if (isAdmin) items.push({ to: '/admin', label: t('nav.admin'), icon: '🛠' });
+
+    return items;
+  }, [t, isAdmin]);
+
+  const closeMenu = () => setMenuOpen(false);
+
   const handleSearch = (event) => {
     event.preventDefault();
     dispatch(setFilter({ key: 'search', value: query }));
-    setMenuOpen(false);
+    closeMenu();
     navigate('/catalog');
   };
-
-  const closeMenu = () => setMenuOpen(false);
 
   return (
     <header className={styles.header}>
       <div className={`container ${styles.inner}`}>
         <Link to="/" className={styles.logo} onClick={closeMenu}>
-          <span className={styles.logoMark} aria-hidden="true">📖</span>
-          <span className={styles.logoText}>Книгарня</span>
+          <span className={styles.logoMark} aria-hidden="true">
+            📖
+          </span>
+          <span className={styles.logoText}>{env.appName}</span>
         </Link>
 
         <form className={styles.search} onSubmit={handleSearch} role="search">
           <input
             type="search"
             className={styles.searchInput}
-            placeholder="Пошук книг, авторів…"
+            placeholder={t('nav.searchPlaceholder')}
             value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            aria-label="Пошук по каталогу"
+            onChange={(event) => setQuery(event.target.value)}
+            aria-label={t('nav.searchLabel')}
           />
-          <button type="submit" className={styles.searchButton} aria-label="Знайти">
+          <button type="submit" className={styles.searchButton} aria-label={t('common.search')}>
             🔍
           </button>
         </form>
@@ -58,61 +74,60 @@ export default function Header() {
           className={styles.burger}
           onClick={() => setMenuOpen((prev) => !prev)}
           aria-expanded={menuOpen}
-          aria-label="Меню"
+          aria-label={t('nav.menu')}
         >
           {menuOpen ? '✕' : '☰'}
         </button>
 
         <nav className={`${styles.nav} ${menuOpen ? styles.navOpen : ''}`}>
-          <NavLink to="/catalog" className={navClass} onClick={closeMenu}>
-            Каталог
-          </NavLink>
-          <NavLink to="/orders" className={navClass} onClick={closeMenu}>
-            Замовлення
-          </NavLink>
-          {isAdmin && (
-            <NavLink to="/admin" className={navClass} onClick={closeMenu}>
-              Адмінка
-            </NavLink>
-          )}
+          <NavList items={navItems} onNavigate={closeMenu} ariaLabel={t('nav.menu')} />
+
+          <LanguageSwitcher />
 
           <button
             type="button"
             className={styles.iconButton}
             onClick={toggleTheme}
-            aria-label={theme === 'dark' ? 'Світла тема' : 'Темна тема'}
-            title={theme === 'dark' ? 'Світла тема' : 'Темна тема'}
+            aria-label={theme === 'dark' ? t('nav.themeLight') : t('nav.themeDark')}
+            title={theme === 'dark' ? t('nav.themeLight') : t('nav.themeDark')}
           >
             {theme === 'dark' ? '☀️' : '🌙'}
           </button>
 
-          <NavLink to="/cart" className={styles.cartLink} onClick={closeMenu} aria-label="Кошик">
+          <Link to="/cart" className={styles.cartLink} onClick={closeMenu} aria-label={t('nav.cart')}>
             <span aria-hidden="true">🛒</span>
-            <span className={styles.cartText}>Кошик</span>
+            <span className={styles.cartText}>{t('nav.cart')}</span>
             {count > 0 && <span className={styles.cartBadge}>{count}</span>}
-          </NavLink>
+          </Link>
 
           {isAuthenticated ? (
             <div className={styles.profile}>
-              <span className={styles.avatar} title={user.getDisplayName()}>
+              <Link
+                to="/account/profile"
+                className={styles.avatar}
+                title={user.getDisplayName()}
+                onClick={closeMenu}
+              >
                 {user.getInitials()}
-              </span>
-              <Button variant="ghost" size="sm" onClick={() => { logout(); closeMenu(); }}>
-                Вийти
+              </Link>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => {
+                  logout();
+                  closeMenu();
+                }}
+              >
+                {t('nav.logout')}
               </Button>
             </div>
           ) : (
             <Link to="/login" onClick={closeMenu}>
-              <Button size="sm">Увійти</Button>
+              <Button size="sm">{t('nav.login')}</Button>
             </Link>
           )}
         </nav>
       </div>
     </header>
   );
-}
-
-/** Функция-класс для NavLink: активный пункт подсвечивается. */
-function navClass({ isActive }) {
-  return isActive ? `${styles.navLink} ${styles.navLinkActive}` : styles.navLink;
 }

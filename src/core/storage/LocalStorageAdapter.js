@@ -1,6 +1,5 @@
 import StorageAdapter from './StorageAdapter.js';
 
-/** Хранение в localStorage: корзина, тема, недавно просмотренные книги. */
 export default class LocalStorageAdapter extends StorageAdapter {
   static isAvailable() {
     try {
@@ -27,7 +26,6 @@ export default class LocalStorageAdapter extends StorageAdapter {
       window.localStorage.setItem(this.buildKey(key), JSON.stringify(value));
       return true;
     } catch {
-      // Например, переполнение квоты — приложение не должно падать.
       return false;
     }
   }
@@ -36,7 +34,6 @@ export default class LocalStorageAdapter extends StorageAdapter {
     window.localStorage.removeItem(this.buildKey(key));
   }
 
-  /** Очистить только свои ключи, чужие не трогаем. */
   clearAll() {
     Object.keys(window.localStorage)
       .filter((k) => k.startsWith(`${this.prefix}:`))

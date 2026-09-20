@@ -5,7 +5,6 @@ import filtersReducer from './filtersSlice.js';
 import ordersReducer from './ordersSlice.js';
 import { persistMiddleware } from './persistMiddleware.js';
 
-/** Глобальное хранилище Redux Toolkit. */
 export const store = configureStore({
   reducer: {
     books: booksReducer,

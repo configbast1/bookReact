@@ -1,14 +1,15 @@
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { CartItem } from '@/core/models';
 import { BookCover, Badge } from '@/components/ui';
 import { useCart } from '@/hooks';
+import { formatLabel } from '@/data/dictionaries.js';
+import { currencySign } from '@/config/env.js';
 import styles from './CartItemRow.module.css';
 
-const FORMAT_LABELS = { paper: 'Паперова', ebook: 'Електронна', audio: 'Аудіо' };
-
-/** CartItemRow — строка товара в корзине. */
 export default function CartItemRow({ item }) {
+  const { t } = useTranslation();
   const { setQty, remove } = useCart();
   const { book, quantity } = item;
 
@@ -19,38 +20,57 @@ export default function CartItemRow({ item }) {
       </Link>
 
       <div className={styles.info}>
-        <Badge tone="info">{FORMAT_LABELS[book.format]}</Badge>
+        <Badge tone="info">{formatLabel(t, book.format)}</Badge>
         <h3 className={styles.title}>
           <Link to={`/book/${book.id}`}>{book.title}</Link>
         </h3>
         <p className={styles.author}>{book.author}</p>
         <p className={styles.unit}>
-          {book.getFinalPrice()} ₴ / шт.
-          {item.savings > 0 && <span className={styles.savings}> економія {item.savings} ₴</span>}
+          {book.getFinalPrice()} {currencySign} / {t('cart.unit')}
+          {item.savings > 0 && (
+            <span className={styles.savings}>
+              {' '}
+              {t('cart.savings')} {item.savings} {currencySign}
+            </span>
+          )}
         </p>
       </div>
 
       <div className={styles.qty}>
-        <button type="button" onClick={() => setQty(book.id, quantity - 1)} aria-label="Зменшити кількість">−</button>
+        <button
+          type="button"
+          onClick={() => setQty(book.id, quantity - 1)}
+          aria-label={t('cart.decrease')}
+        >
+          −
+        </button>
         <input
           type="number"
           min={1}
           max={99}
           value={quantity}
-          onChange={(e) => setQty(book.id, Number(e.target.value))}
-          aria-label={`Кількість: ${book.title}`}
+          onChange={(event) => setQty(book.id, Number(event.target.value))}
+          aria-label={t('cart.quantityOf', { title: book.title })}
         />
-        <button type="button" onClick={() => setQty(book.id, quantity + 1)} aria-label="Збільшити кількість">+</button>
+        <button
+          type="button"
+          onClick={() => setQty(book.id, quantity + 1)}
+          aria-label={t('cart.increase')}
+        >
+          +
+        </button>
       </div>
 
-      <div className={styles.subtotal}>{item.subtotal} ₴</div>
+      <div className={styles.subtotal}>
+        {item.subtotal} {currencySign}
+      </div>
 
       <button
         type="button"
         className={styles.remove}
         onClick={() => remove(book.id)}
-        aria-label={`Видалити ${book.title} з кошика`}
-        title="Видалити"
+        aria-label={t('cart.remove', { title: book.title })}
+        title={t('common.delete')}
       >
         ✕
       </button>

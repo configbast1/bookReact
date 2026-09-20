@@ -1,9 +1,5 @@
 import Entity from './Entity.js';
 
-/**
- * User — базовый пользователь. Ещё одна ветка наследования от Entity.
- * Наследники: Customer (покупатель) и AdminUser (админ).
- */
 export default class User extends Entity {
   #email;
   #passwordHash;
@@ -11,7 +7,7 @@ export default class User extends Entity {
   constructor({ id, createdAt, name, email, password = '', passwordHash = '', avatar = '' }) {
     super(id, createdAt);
     if (new.target === User) {
-      throw new TypeError('User — абстрактный класс, используйте Customer или AdminUser');
+      throw new TypeError('User is an abstract class, use Customer or AdminUser');
     }
     this.name = name;
     this.avatar = avatar;
@@ -26,15 +22,11 @@ export default class User extends Entity {
 
   set email(value) {
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(String(value))) {
-      throw new TypeError('Некоректний email');
+      throw new TypeError('Invalid email');
     }
     this.#email = String(value).toLowerCase();
   }
 
-  /**
-   * Учебный "хеш" пароля. В реальном проекте — bcrypt/argon2 на бэкенде.
-   * Здесь показываем инкапсуляцию: наружу пароль не отдаётся никогда.
-   */
   static hash(value) {
     let h = 0;
     const str = String(value);
@@ -49,7 +41,6 @@ export default class User extends Entity {
     return User.hash(candidate) === this.#passwordHash;
   }
 
-  /** Полиморфный метод: набор прав зависит от роли. */
   get permissions() {
     return ['catalog:read'];
   }
@@ -66,7 +57,6 @@ export default class User extends Entity {
     return this.name || this.#email;
   }
 
-  /** Инициалы для аватара. */
   getInitials() {
     return this.getDisplayName()
       .split(' ')
@@ -77,7 +67,6 @@ export default class User extends Entity {
   }
 
   toJSON() {
-    // Обратите внимание: passwordHash наружу не уходит.
     return {
       ...super.toJSON(),
       name: this.name,

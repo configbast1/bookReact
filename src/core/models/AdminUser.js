@@ -1,6 +1,5 @@
 import User from './User.js';
 
-/** AdminUser — администратор магазина, имеет доступ к админ-панели. */
 export default class AdminUser extends User {
   static ROLE = 'admin';
 
@@ -25,7 +24,7 @@ export default class AdminUser extends User {
   }
 
   getDisplayName() {
-    return `${super.getDisplayName()} (адмін)`;
+    return `${super.getDisplayName()} (admin)`;
   }
 
   toJSON() {

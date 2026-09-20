@@ -1,41 +1,67 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link, Navigate, useLocation, useNavigate } from 'react-router-dom';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useTranslation } from 'react-i18next';
 import { Button, Input } from '@/components/ui';
 import { useAuth } from '@/context/AuthContext.jsx';
 import { useToast } from '@/context/ToastContext.jsx';
-import { useForm } from '@/hooks';
-import { loginSchema, registerSchema } from '@/core/validation';
+import { loginSchema, registerSchema } from '@/validation/schemas.js';
+import { translateError } from '@/validation/messages.js';
 import styles from './LoginPage.module.css';
 
-/** LoginPage — вход и регистрация в одной форме с переключателем. */
 export default function LoginPage() {
-  const { login, register, isAuthenticated } = useAuth();
+  const { t } = useTranslation();
+  const { login, register: registerUser, isAuthenticated } = useAuth();
   const toast = useToast();
   const navigate = useNavigate();
   const location = useLocation();
-  const [mode, setMode] = useState('login'); // login | register
 
+  const [mode, setMode] = useState('login');
   const redirectTo = location.state?.from ?? '/';
 
-  const loginForm = useForm({ email: '', password: '' }, loginSchema, async (values) => {
-    const user = await login(values.email, values.password);
-    toast.success(`Вітаємо, ${user.name}!`);
-    navigate(redirectTo, { replace: true });
+  const {
+    register,
+    handleSubmit,
+    reset,
+    setValue,
+    setError,
+    clearErrors,
+    formState: { errors, isSubmitting },
+  } = useForm({
+    resolver: zodResolver(mode === 'login' ? loginSchema : registerSchema),
+    defaultValues: { name: '', email: '', password: '' },
   });
 
-  const registerForm = useForm(
-    { name: '', email: '', password: '' },
-    registerSchema,
-    async (values) => {
-      await register(values);
-      toast.success('Реєстрація успішна!');
+  useEffect(() => {
+    clearErrors();
+  }, [mode, clearErrors]);
+
+  const error = (field) => translateError(t, errors[field]?.message);
+
+  const submit = handleSubmit(async (values) => {
+    try {
+      if (mode === 'login') {
+        const user = await login(values.email, values.password);
+        toast.success(t('login.welcome', { name: user.name }));
+      } else {
+        await registerUser(values);
+        toast.success(t('login.registered'));
+      }
       navigate(redirectTo, { replace: true });
-    },
-  );
+    } catch (authError) {
+      const text = authError.message.startsWith('login.') ? t(authError.message) : authError.message;
+      setError('root', { message: text });
+    }
+  });
 
   if (isAuthenticated) return <Navigate to={redirectTo} replace />;
 
-  const form = mode === 'login' ? loginForm : registerForm;
+  const fillDemo = (email, password) => {
+    reset({ name: '', email, password });
+    setValue('email', email);
+    setValue('password', password);
+  };
 
   return (
     <div className="container page">
@@ -49,7 +75,7 @@ export default function LoginPage() {
               className={mode === 'login' ? styles.tabActive : styles.tab}
               onClick={() => setMode('login')}
             >
-              Вхід
+              {t('login.login')}
             </button>
             <button
               type="button"
@@ -58,56 +84,70 @@ export default function LoginPage() {
               className={mode === 'register' ? styles.tabActive : styles.tab}
               onClick={() => setMode('register')}
             >
-              Реєстрація
+              {t('login.register')}
             </button>
           </div>
 
-          <form onSubmit={form.handleSubmit} noValidate>
+          <form onSubmit={submit} noValidate>
             {mode === 'register' && (
-              <Input label="Імʼя" required placeholder="Іван Петренко" {...registerForm.fieldProps('name')} />
+              <Input
+                label={t('login.name')}
+                required
+                placeholder={t('login.namePlaceholder')}
+                error={error('name')}
+                {...register('name')}
+              />
             )}
 
-            <Input label="Email" type="email" required placeholder="you@mail.com" {...form.fieldProps('email')} />
+            <Input
+              label={t('login.email')}
+              type="email"
+              required
+              placeholder="you@mail.com"
+              error={error('email')}
+              {...register('email')}
+            />
 
             <Input
-              label="Пароль"
+              label={t('login.password')}
               type="password"
               required
               placeholder="••••••"
-              hint={mode === 'register' ? 'Мінімум 6 символів, літера та цифра' : undefined}
-              {...form.fieldProps('password')}
+              hint={mode === 'register' ? t('login.passwordHint') : undefined}
+              error={error('password')}
+              {...register('password')}
             />
 
-            {form.submitError && <p className={styles.error}>{form.submitError}</p>}
+            {errors.root && <p className={styles.error}>{errors.root.message}</p>}
 
-            <Button type="submit" fullWidth size="lg" loading={form.submitting}>
-              {mode === 'login' ? 'Увійти' : 'Зареєструватися'}
+            <Button type="submit" fullWidth size="lg" loading={isSubmitting}>
+              {mode === 'login' ? t('login.submitLogin') : t('login.submitRegister')}
             </Button>
           </form>
 
           {mode === 'login' && (
             <div className={styles.demo}>
-              <p className={styles.demoTitle}>Демо-доступи:</p>
+              <p className={styles.demoTitle}>{t('login.demoTitle')}</p>
               <button
                 type="button"
                 className={styles.demoButton}
-                onClick={() => loginForm.setValues({ email: 'admin@book.ua', password: 'admin123' })}
+                onClick={() => fillDemo('admin@book.ua', 'admin123')}
               >
-                👑 Адміністратор — admin@book.ua / admin123
+                👑 {t('login.demoAdmin')}
               </button>
               <button
                 type="button"
                 className={styles.demoButton}
-                onClick={() => loginForm.setValues({ email: 'user@book.ua', password: 'user123' })}
+                onClick={() => fillDemo('user@book.ua', 'user123')}
               >
-                🙋 Покупець — user@book.ua / user123
+                🙋 {t('login.demoUser')}
               </button>
             </div>
           )}
         </div>
 
         <p className={styles.back}>
-          <Link to="/">← На головну</Link>
+          <Link to="/">{t('login.backHome')}</Link>
         </p>
       </div>
     </div>

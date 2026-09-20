@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 import { Entity } from '@/core/models';
 import styles from './ToastContext.module.css';
 
-/** ToastContext — всплывающие уведомления (добавлено в корзину, ошибка и т.д.). */
 const ToastContext = createContext(null);
 
 export function ToastProvider({ children }) {
@@ -54,6 +53,6 @@ ToastProvider.propTypes = { children: PropTypes.node };
 
 export function useToast() {
   const ctx = useContext(ToastContext);
-  if (!ctx) throw new Error('useToast має використовуватись всередині <ToastProvider>');
+  if (!ctx) throw new Error('useToast must be used inside <ToastProvider>');
   return ctx;
 }

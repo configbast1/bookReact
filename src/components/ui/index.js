@@ -1,6 +1,7 @@
 export { default as Button } from './Button.jsx';
 export { Input, Select, Textarea, Checkbox } from './Field.jsx';
 export { default as Modal } from './Modal.jsx';
+export { default as ConfirmDialog } from './ConfirmDialog.jsx';
 export { default as Rating } from './Rating.jsx';
 export { default as Badge } from './Badge.jsx';
 export { default as Spinner, SkeletonGrid } from './Spinner.jsx';

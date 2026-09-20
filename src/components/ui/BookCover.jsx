@@ -1,7 +1,6 @@
 import PropTypes from 'prop-types';
 import styles from './BookCover.module.css';
 
-/** Палитра обложек — цвет выбирается детерминированно по названию книги. */
 const PALETTE = [
   ['#8a5a2b', '#c89b6a'],
   ['#2f5d62', '#7fb2a6'],
@@ -12,7 +11,6 @@ const PALETTE = [
   ['#8c5a12', '#d6a75a'],
 ];
 
-/** Простая хеш-функция строки -> индекс палитры. */
 function hashIndex(text, modulo) {
   let hash = 0;
   for (let i = 0; i < text.length; i += 1) {
@@ -21,11 +19,6 @@ function hashIndex(text, modulo) {
   return hash % modulo;
 }
 
-/**
- * BookCover — генерируемая обложка.
- * Не тянем картинки из интернета: обложка рисуется из названия книги,
- * поэтому проект работает офлайн и без битых изображений.
- */
 export default function BookCover({ book, size = 'md' }) {
   const [from, to] = PALETTE[hashIndex(book.title, PALETTE.length)];
 

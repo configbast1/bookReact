@@ -1,7 +1,6 @@
 import BaseRepository from './BaseRepository.js';
 import { usersSeed } from '../../data/usersSeed.js';
 
-/** UserRepository — пользователи (демо-логины). */
 export default class UserRepository extends BaseRepository {
   constructor() {
     super('users', usersSeed);

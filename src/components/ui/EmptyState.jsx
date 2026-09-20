@@ -1,7 +1,6 @@
 import PropTypes from 'prop-types';
 import styles from './EmptyState.module.css';
 
-/** EmptyState — понятная заглушка вместо пустого экрана. */
 export default function EmptyState({ icon = '📚', title, description, action }) {
   return (
     <div className={styles.empty}>

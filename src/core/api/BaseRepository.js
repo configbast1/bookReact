@@ -1,24 +1,16 @@
 import HttpClient from './HttpClient.js';
 import { localStore } from '../storage/index.js';
 
-/**
- * BaseRepository — базовый репозиторий (паттерн Repository).
- * Прячет источник данных: сначала пробует REST API (json-server),
- * а если сервер недоступен — работает с локальной копией в localStorage.
- * Благодаря этому демо-версия на хостинге живёт без бэкенда.
- */
 export default class BaseRepository {
   constructor(resource, seed = []) {
     if (new.target === BaseRepository) {
-      throw new TypeError('BaseRepository — абстрактний клас');
+      throw new TypeError('BaseRepository is an abstract class');
     }
     this.resource = resource;
     this.seed = seed;
     this.http = new HttpClient('/api');
-    this.useApi = true; // переключается автоматически при первой ошибке сети
+    this.useApi = true;
   }
-
-  // ---------- локальный резервный режим ----------
 
   readLocal() {
     const stored = localStore.get(`db:${this.resource}`, null);
@@ -32,14 +24,12 @@ export default class BaseRepository {
     return list;
   }
 
-  // ---------- публичный интерфейс ----------
-
   async getAll() {
     if (this.useApi) {
       try {
         return await this.http.get(`/${this.resource}`);
       } catch {
-        this.useApi = false; // сервер не отвечает — уходим в офлайн-режим
+        this.useApi = false;
       }
     }
     return this.readLocal();

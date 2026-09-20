@@ -1,132 +1,182 @@
 import PropTypes from 'prop-types';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useTranslation } from 'react-i18next';
 import { Button, Input, Select, Textarea } from '@/components/ui';
-import { useForm } from '@/hooks';
-import { bookSchema } from '@/core/validation';
-import { FORMATS, GENRES } from '@/data/booksSeed.js';
+import { bookSchema } from '@/validation/schemas.js';
+import { translateError } from '@/validation/messages.js';
+import { GENRES } from '@/data/booksSeed.js';
+import { formatOptions, genreOptions } from '@/data/dictionaries.js';
+import { currencySign } from '@/config/env.js';
 import styles from './BookForm.module.css';
 
-/**
- * BookForm — форма добавления/редактирования книги.
- * Одна форма на два сценария: если передан book — режим редактирования.
- * Валидация — та же ООП-схема bookSchema.
- */
 export default function BookForm({ book = null, onSubmit, onCancel }) {
-  const form = useForm(
-    {
+  const { t } = useTranslation();
+
+  const {
+    register,
+    handleSubmit,
+    watch,
+    formState: { errors, isSubmitting },
+  } = useForm({
+    resolver: zodResolver(bookSchema),
+    defaultValues: {
       title: book?.title ?? '',
       author: book?.author ?? '',
       genre: book?.genre ?? GENRES[0],
       format: book?.format ?? 'paper',
-      price: book?.price ?? '',
+      price: book?.price ?? 100,
       year: book?.year ?? new Date().getFullYear(),
       stock: book?.stock ?? 0,
       pages: book?.pages ?? 0,
       isbn: book?.isbn ?? '',
       rating: book?.rating ?? 0,
       description: book?.description ?? '',
-      // поля конкретных подклассов
       cover: book?.cover ?? 'soft',
       fileFormat: book?.fileFormat ?? 'pdf',
       narrator: book?.narrator ?? '',
       durationMin: book?.durationMin ?? 300,
     },
-    bookSchema,
-    async (values) => {
-      // Приводим строки из input к числам перед сохранением.
-      await onSubmit({
-        ...values,
-        price: Number(values.price),
-        year: Number(values.year),
-        stock: Number(values.stock),
-        pages: Number(values.pages),
-        rating: Number(values.rating),
-        durationMin: Number(values.durationMin),
-      });
-    },
-  );
+  });
 
-  const format = form.values.format;
+  const format = watch('format');
+  const error = (field) => translateError(t, errors[field]?.message);
 
   return (
-    <form onSubmit={form.handleSubmit} noValidate>
+    <form onSubmit={handleSubmit(onSubmit)} noValidate>
       <div className={styles.grid2}>
-        <Input label="Назва" required {...form.fieldProps('title')} />
-        <Input label="Автор" required {...form.fieldProps('author')} />
-      </div>
-
-      <div className={styles.grid3}>
-        <Select
-          label="Жанр"
-          required
-          options={GENRES.map((g) => ({ value: g, label: g }))}
-          {...form.fieldProps('genre')}
-        />
-        <Select
-          label="Формат"
-          required
-          options={FORMATS.map((f) => ({ value: f.value, label: f.label }))}
-          {...form.fieldProps('format')}
-        />
-        <Input label="Ціна, ₴" type="number" min="1" required {...form.fieldProps('price')} />
-      </div>
-
-      <div className={styles.grid3}>
-        <Input label="Рік" type="number" required {...form.fieldProps('year')} />
+        <Input label={t('admin.form.title')} required error={error('title')} {...register('title')} />
         <Input
-          label="На складі"
+          label={t('admin.form.author')}
+          required
+          error={error('author')}
+          {...register('author')}
+        />
+      </div>
+
+      <div className={styles.grid3}>
+        <Select
+          label={t('admin.form.genre')}
+          required
+          options={genreOptions(t, GENRES)}
+          error={error('genre')}
+          {...register('genre')}
+        />
+        <Select
+          label={t('admin.form.format')}
+          required
+          options={formatOptions(t)}
+          error={error('format')}
+          {...register('format')}
+        />
+        <Input
+          label={`${t('admin.form.price')}, ${currencySign}`}
+          type="number"
+          min="1"
+          required
+          error={error('price')}
+          {...register('price')}
+        />
+      </div>
+
+      <div className={styles.grid3}>
+        <Input
+          label={t('admin.form.year')}
+          type="number"
+          required
+          error={error('year')}
+          {...register('year')}
+        />
+        <Input
+          label={t('admin.form.stock')}
           type="number"
           min="0"
           disabled={format !== 'paper'}
-          hint={format !== 'paper' ? 'Цифровий товар — необмежено' : undefined}
-          {...form.fieldProps('stock')}
+          hint={format !== 'paper' ? t('admin.form.stockHint') : undefined}
+          error={error('stock')}
+          {...register('stock')}
         />
-        <Input label="Сторінок" type="number" min="0" {...form.fieldProps('pages')} />
+        <Input
+          label={t('admin.form.pages')}
+          type="number"
+          min="0"
+          error={error('pages')}
+          {...register('pages')}
+        />
       </div>
 
       <div className={styles.grid2}>
-        <Input label="ISBN" placeholder="978-617-09-0000-0" {...form.fieldProps('isbn')} />
-        <Input label="Рейтинг (0–5)" type="number" step="0.1" min="0" max="5" {...form.fieldProps('rating')} />
+        <Input
+          label={t('admin.form.isbn')}
+          placeholder="978-617-09-0000-0"
+          error={error('isbn')}
+          {...register('isbn')}
+        />
+        <Input
+          label={t('admin.form.rating')}
+          type="number"
+          step="0.1"
+          min="0"
+          max="5"
+          error={error('rating')}
+          {...register('rating')}
+        />
       </div>
 
-      {/* Поля, специфичные для конкретного класса книги */}
       {format === 'paper' && (
         <Select
-          label="Обкладинка"
+          label={t('admin.form.cover')}
           options={[
-            { value: 'soft', label: 'Мʼяка' },
-            { value: 'hard', label: 'Тверда' },
+            { value: 'soft', label: t('admin.form.coverSoft') },
+            { value: 'hard', label: t('admin.form.coverHard') },
           ]}
-          {...form.fieldProps('cover')}
+          error={error('cover')}
+          {...register('cover')}
         />
       )}
 
       {format === 'ebook' && (
         <Select
-          label="Формат файлу"
+          label={t('admin.form.fileFormat')}
           options={[
             { value: 'pdf', label: 'PDF' },
             { value: 'epub', label: 'EPUB' },
             { value: 'fb2', label: 'FB2' },
           ]}
-          {...form.fieldProps('fileFormat')}
+          error={error('fileFormat')}
+          {...register('fileFormat')}
         />
       )}
 
       {format === 'audio' && (
         <div className={styles.grid2}>
-          <Input label="Диктор" {...form.fieldProps('narrator')} />
-          <Input label="Тривалість, хв" type="number" min="1" {...form.fieldProps('durationMin')} />
+          <Input
+            label={t('admin.form.narrator')}
+            error={error('narrator')}
+            {...register('narrator')}
+          />
+          <Input
+            label={t('admin.form.duration')}
+            type="number"
+            min="1"
+            error={error('durationMin')}
+            {...register('durationMin')}
+          />
         </div>
       )}
 
-      <Textarea label="Опис" {...form.fieldProps('description')} />
-
-      {form.submitError && <p className={styles.error}>{form.submitError}</p>}
+      <Textarea
+        label={t('admin.form.description')}
+        error={error('description')}
+        {...register('description')}
+      />
 
       <div className={styles.actions}>
-        <Button type="button" variant="secondary" onClick={onCancel}>Скасувати</Button>
-        <Button type="submit" loading={form.submitting}>
-          {book ? 'Зберегти зміни' : 'Додати книгу'}
+        <Button type="button" variant="secondary" onClick={onCancel}>
+          {t('common.cancel')}
+        </Button>
+        <Button type="submit" loading={isSubmitting}>
+          {book ? t('admin.form.submitEdit') : t('admin.form.submitNew')}
         </Button>
       </div>
     </form>

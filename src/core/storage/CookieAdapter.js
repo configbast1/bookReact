@@ -1,10 +1,5 @@
 import StorageAdapter from './StorageAdapter.js';
 
-/**
- * Хранение в cookie: токен сессии и выбранная тема.
- * Cookie отличаются от localStorage сроком жизни и тем,
- * что автоматически отправляются на сервер вместе с запросом.
- */
 export default class CookieAdapter extends StorageAdapter {
   constructor(prefix = 'bs', defaultDays = 7) {
     super(prefix);

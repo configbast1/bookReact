@@ -1,11 +1,6 @@
 import PropTypes from 'prop-types';
 import styles from './DataTable.module.css';
 
-/**
- * DataTable — переиспользуемая таблица.
- * Колонки описываются массивом объектов { key, title, render, width },
- * поэтому одну и ту же таблицу используем и для книг, и для заказов.
- */
 export default function DataTable({ columns, rows, rowKey = (row) => row.id, empty = 'Немає даних' }) {
   if (!rows.length) {
     return <p className={styles.empty}>{empty}</p>;

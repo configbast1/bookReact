@@ -1,29 +1,47 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { selectPagedBooks, selectFilters, selectBooksStatus, setFilter, setPage, resetFilters } from '@/store';
+import { useTranslation } from 'react-i18next';
+import {
+  selectPagedBooks,
+  selectFilters,
+  selectBooksStatus,
+  selectGenreCounts,
+  setFilter,
+  setPage,
+  resetFilters,
+} from '@/store';
 import { BookFilters, BookGrid } from '@/components/books';
+import { CategoryList } from '@/components/catalog';
 import { Button, EmptyState, Pagination, Select, SkeletonGrid } from '@/components/ui';
 import { useMediaQuery } from '@/hooks';
+import { genreLabel } from '@/data/dictionaries.js';
 import styles from './CatalogPage.module.css';
 
-const SORT_OPTIONS = [
-  { value: 'popular', label: 'За популярністю' },
-  { value: 'priceAsc', label: 'Ціна: спочатку дешевші' },
-  { value: 'priceDesc', label: 'Ціна: спочатку дорожчі' },
-  { value: 'ratingDesc', label: 'За рейтингом' },
-  { value: 'yearDesc', label: 'Спочатку нові' },
-  { value: 'titleAsc', label: 'За назвою (А–Я)' },
-];
+const SORT_KEYS = ['popular', 'priceAsc', 'priceDesc', 'ratingDesc', 'yearDesc', 'titleAsc'];
 
-/** CatalogPage — каталог с фильтрами, сортировкой и пагинацией. */
 export default function CatalogPage() {
+  const { t } = useTranslation();
   const dispatch = useDispatch();
+
   const { items, total, page, totalPages } = useSelector(selectPagedBooks);
   const filters = useSelector(selectFilters);
   const status = useSelector(selectBooksStatus);
+  const genreCounts = useSelector(selectGenreCounts);
 
   const isMobile = useMediaQuery('(max-width: 900px)');
   const [filtersOpen, setFiltersOpen] = useState(false);
+
+  const categories = useMemo(
+    () => [
+      { value: 'all', label: t('catalog.allGenres'), count: total },
+      ...genreCounts.map((entry) => ({
+        value: entry.genre,
+        label: genreLabel(t, entry.genre),
+        count: entry.count,
+      })),
+    ],
+    [genreCounts, total, t],
+  );
 
   const handlePageChange = (next) => {
     dispatch(setPage(next));
@@ -33,25 +51,31 @@ export default function CatalogPage() {
   return (
     <div className="container page">
       <div className="pageHeader">
-        <h1>Каталог книг</h1>
+        <h1>{t('catalog.title')}</h1>
+
         <div className={styles.controls}>
           {isMobile && (
             <Button variant="secondary" size="sm" onClick={() => setFiltersOpen((v) => !v)}>
-              {filtersOpen ? 'Сховати фільтри' : 'Фільтри'}
+              {filtersOpen ? t('catalog.hideFilters') : t('catalog.showFilters')}
             </Button>
           )}
           <Select
             className={styles.sort}
-            aria-label="Сортування"
+            aria-label={t('catalog.sortLabel')}
             value={filters.sort}
-            onChange={(e) => dispatch(setFilter({ key: 'sort', value: e.target.value }))}
-            options={SORT_OPTIONS}
+            onChange={(event) => dispatch(setFilter({ key: 'sort', value: event.target.value }))}
+            options={SORT_KEYS.map((key) => ({ value: key, label: t(`catalog.sort.${key}`) }))}
           />
         </div>
       </div>
 
       <div className={styles.layout}>
         <div className={`${styles.sidebar} ${isMobile && !filtersOpen ? styles.hidden : ''}`}>
+          <CategoryList
+            categories={categories}
+            active={filters.genre}
+            onSelect={(value) => dispatch(setFilter({ key: 'genre', value }))}
+          />
           <BookFilters resultCount={total} />
         </div>
 
@@ -61,9 +85,13 @@ export default function CatalogPage() {
           {status !== 'loading' && items.length === 0 && (
             <EmptyState
               icon="🔍"
-              title="Нічого не знайдено"
-              description="Спробуйте змінити параметри пошуку або скинути фільтри."
-              action={<Button onClick={() => dispatch(resetFilters())}>Скинути фільтри</Button>}
+              title={t('catalog.emptyTitle')}
+              description={t('catalog.emptyText')}
+              action={
+                <Button onClick={() => dispatch(resetFilters())}>
+                  {t('catalog.filters.reset')}
+                </Button>
+              }
             />
           )}
 

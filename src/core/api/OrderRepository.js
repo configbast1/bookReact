@@ -1,7 +1,6 @@
 import BaseRepository from './BaseRepository.js';
 import { Order } from '../models/index.js';
 
-/** OrderRepository — заказы. */
 export default class OrderRepository extends BaseRepository {
   constructor() {
     super('orders', []);
@@ -17,11 +16,10 @@ export default class OrderRepository extends BaseRepository {
     return raw.filter((o) => o.userId === userId);
   }
 
-  /** Смена статуса заказа: правило перехода живёт в модели Order. */
   async changeStatus(id, nextStatus) {
     const raw = await this.getById(id);
     const order = new Order(raw);
-    order.setStatus(nextStatus); // выбросит ошибку, если переход запрещён
+    order.setStatus(nextStatus);
     return this.update(id, order.toJSON());
   }
 }

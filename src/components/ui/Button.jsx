@@ -1,11 +1,6 @@
 import PropTypes from 'prop-types';
 import styles from './Button.module.css';
 
-/**
- * Button — базовая кнопка приложения.
- * Пример работы с props: variant, size, loading, fullWidth,
- * плюс ...rest, чтобы прокинуть любые нативные атрибуты.
- */
 export default function Button({
   children,
   variant = 'primary',
@@ -37,7 +32,6 @@ export default function Button({
   );
 }
 
-// PropTypes — контракт компонента: какие пропсы он принимает и какого типа.
 Button.propTypes = {
   children: PropTypes.node,
   variant: PropTypes.oneOf(['primary', 'secondary', 'ghost', 'danger', 'success']),

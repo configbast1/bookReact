@@ -1,60 +1,35 @@
-import { useEffect, useRef } from 'react';
-import { createPortal } from 'react-dom';
 import PropTypes from 'prop-types';
+import { Dialog, DialogBackdrop, DialogPanel, DialogTitle } from '@headlessui/react';
+import { useTranslation } from 'react-i18next';
 import styles from './Modal.module.css';
 
-/**
- * Modal — модальное окно через React-портал.
- * Заботимся об эргономике: закрытие по Esc и клику на фон,
- * блокировка прокрутки страницы, возврат фокуса.
- */
 export default function Modal({ open, title, onClose, children, footer, width = 520 }) {
-  const dialogRef = useRef(null);
+  const { t } = useTranslation();
 
-  useEffect(() => {
-    if (!open) return undefined;
+  return (
+    <Dialog open={open} onClose={() => onClose?.()} className={styles.root}>
+      <DialogBackdrop transition className={styles.overlay} />
 
-    const previouslyFocused = document.activeElement;
-    const handleKey = (event) => {
-      if (event.key === 'Escape') onClose?.();
-    };
+      <div className={styles.wrap}>
+        <DialogPanel transition className={styles.dialog} style={{ maxWidth: width }}>
+          <header className={styles.header}>
+            <DialogTitle className={styles.title}>{title}</DialogTitle>
+            <button
+              type="button"
+              className={styles.close}
+              onClick={() => onClose?.()}
+              aria-label={t('common.close')}
+            >
+              ×
+            </button>
+          </header>
 
-    document.addEventListener('keydown', handleKey);
-    document.body.style.overflow = 'hidden';
-    dialogRef.current?.focus();
+          <div className={styles.body}>{children}</div>
 
-    return () => {
-      document.removeEventListener('keydown', handleKey);
-      document.body.style.overflow = '';
-      previouslyFocused?.focus?.();
-    };
-  }, [open, onClose]);
-
-  if (!open) return null;
-
-  return createPortal(
-    <div className={styles.overlay} onMouseDown={onClose}>
-      <div
-        ref={dialogRef}
-        tabIndex={-1}
-        role="dialog"
-        aria-modal="true"
-        aria-label={title}
-        className={styles.dialog}
-        style={{ maxWidth: width }}
-        onMouseDown={(event) => event.stopPropagation()}
-      >
-        <header className={styles.header}>
-          <h3 className={styles.title}>{title}</h3>
-          <button type="button" className={styles.close} onClick={onClose} aria-label="Закрити вікно">
-            ×
-          </button>
-        </header>
-        <div className={styles.body}>{children}</div>
-        {footer && <footer className={styles.footer}>{footer}</footer>}
+          {footer && <footer className={styles.footer}>{footer}</footer>}
+        </DialogPanel>
       </div>
-    </div>,
-    document.body,
+    </Dialog>
   );
 }
 

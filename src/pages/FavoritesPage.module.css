@@ -1,0 +1,16 @@
+.subtitle {
+  margin: 6px 0 0;
+  max-width: 620px;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+
+.counter {
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-weight: 600;
+  font-size: 0.9rem;
+  white-space: nowrap;
+}

@@ -1,22 +1,20 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { localStore, STORAGE_KEYS } from '@/core/storage';
 
-/** Значения фильтров по умолчанию. */
 export const defaultFilters = {
   search: '',
   genre: 'all',
-  formats: [], // пустой массив = все форматы
+  formats: [],
   priceMin: 0,
   priceMax: 1000,
   minRating: 0,
   inStockOnly: false,
   onlyNew: false,
-  sort: 'popular', // popular | priceAsc | priceDesc | ratingDesc | yearDesc | titleAsc
+  sort: 'popular',
   page: 1,
   perPage: 8,
 };
 
-// Восстанавливаем сохранённые фильтры из localStorage (требование "збереження даних").
 const persisted = localStore.get(STORAGE_KEYS.FILTERS, null);
 
 const filtersSlice = createSlice({
@@ -26,7 +24,6 @@ const filtersSlice = createSlice({
     setFilter(state, action) {
       const { key, value } = action.payload;
       state[key] = value;
-      // Любое изменение фильтра сбрасывает пагинацию на первую страницу.
       if (key !== 'page') state.page = 1;
     },
     toggleFormat(state, action) {

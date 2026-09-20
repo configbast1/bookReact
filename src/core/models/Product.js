@@ -1,28 +1,23 @@
 import Entity from './Entity.js';
 
-/**
- * Product — общий товар магазина. Наследник Entity.
- * Уровень 2 иерархии: Entity -> Product -> Book -> PaperBook/EBook/AudioBook
- */
 export default class Product extends Entity {
   #price;
   #stock;
 
   constructor({ id, createdAt, title, price, stock = 0, image = '', category = 'other' }) {
-    super(id, createdAt); // вызов конструктора родителя
+    super(id, createdAt);
     if (new.target === Product) {
-      throw new TypeError('Product — абстрактный класс, создавайте конкретный товар (Book и т.п.)');
+      throw new TypeError('Product is an abstract class');
     }
     this.title = title;
     this.image = image;
     this.category = category;
     this.#price = 0;
     this.#stock = 0;
-    this.price = price; // проходит через сеттер с валидацией
+    this.price = price;
     this.stock = stock;
   }
 
-  /** Геттер/сеттер: цена не может быть отрицательной. */
   get price() {
     return this.#price;
   }
@@ -30,7 +25,7 @@ export default class Product extends Entity {
   set price(value) {
     const num = Number(value);
     if (Number.isNaN(num) || num < 0) {
-      throw new RangeError('Ціна не може бути відʼємною');
+      throw new RangeError('Price cannot be negative');
     }
     this.#price = Math.round(num * 100) / 100;
   }
@@ -42,7 +37,7 @@ export default class Product extends Entity {
   set stock(value) {
     const num = Number(value);
     if (!Number.isInteger(num) || num < 0) {
-      throw new RangeError('Кількість на складі — ціле невідʼємне число');
+      throw new RangeError('Stock must be a non-negative integer');
     }
     this.#stock = num;
   }
@@ -51,15 +46,10 @@ export default class Product extends Entity {
     return this.#stock > 0;
   }
 
-  /**
-   * Полиморфизм: базовая скидка = 0.
-   * Наследники переопределяют этот метод (см. EBook).
-   */
   getDiscountPercent() {
     return 0;
   }
 
-  /** Итоговая цена с учётом скидки конкретного типа товара. */
   getFinalPrice() {
     const discount = this.getDiscountPercent();
     return Math.round(this.price * (1 - discount / 100) * 100) / 100;
@@ -71,7 +61,7 @@ export default class Product extends Entity {
 
   toJSON() {
     return {
-      ...super.toJSON(), // переиспользуем реализацию родителя
+      ...super.toJSON(),
       title: this.title,
       price: this.price,
       stock: this.stock,
