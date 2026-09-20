@@ -16,7 +16,6 @@ export const aboutMe = {
   favoriteGame: 'The Witcher 3',
   hobbies: ['programming', 'reading', 'gaming', 'music'],
   yearGoal: 'Get the first commercial front-end job',
-  funFact: 'The first program I ever wrote was a console process manager in C++',
   availableForWork: true,
   updatedAt: '2026-09-20',
 };
