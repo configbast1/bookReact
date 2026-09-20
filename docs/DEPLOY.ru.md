@@ -1,3 +1,3 @@
 # Деплой
 
-https://github.com/configbast1/bookReact
+https://book-react-brown.vercel.app
