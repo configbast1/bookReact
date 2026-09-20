@@ -1,5 +1,5 @@
 export const aboutMe = {
-  fullName: 'Taras Okres',
+  fullName: '?',
   nickname: 'configbast1',
   role: 'Front-end developer (student)',
   location: 'Ukraine',
